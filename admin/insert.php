@@ -55,6 +55,7 @@ $db = DataBase::connect();
                 <div>
                     <label class="form-label" for="category">Catégorie:</label>
                     <select class="form-control" id="category" name="category">
+                        <!-- Quand on a peu d'affichage à faire, on peut faire la requête directement pour l'affichage -->
                         <?php foreach ($db->query("SELECT * FROM categories") as $categ) {
                             echo "<option value='" . $categ['id'] . "'>" . $categ['name'] . "</option>";
                         } ?>

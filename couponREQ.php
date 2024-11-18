@@ -14,7 +14,7 @@ if (!empty($coupon)) {
     // Récupérer le total panier de l'utilisateur courant + appliquer la remise
     $_SESSION['coupon'] = $coupon['remise'] . ' ' . $coupon['type'];
     $totalPanier = $_POST['total'];
-    $valeurtRemise = $coupon['remise'];
+    $valeurRemise = $coupon['remise'];
     $type = $coupon['type'];
     if ($coupon['type'] == '%') {
         $remise = $totalPanier * ($valeurRemise / 100);

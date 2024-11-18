@@ -92,7 +92,7 @@ Database::disconnect();
                                 <div class="col-md-6 col-lg-4">
                                     <div class="img-thumbnail">
                                         <img src="images/<?= $product['image'] ?>" class="img-fluid" alt="...">
-                                        <div class="price"><?= $product['price'] ?>0 €</div>
+                                        <div class="price"><?= number_format($product['price'], 2, ',', ' ') ?></div>
                                         <div class="caption">
                                             <h4><?= $product['name'] ?></h4>
                                             <p><?= $product['description'] ?></p>
