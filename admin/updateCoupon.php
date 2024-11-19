@@ -1,48 +1,58 @@
 <?php
 require '../db.php';
+require 'verifRole.php';    
 
-$db = Database::connect();
+$db = DataBase::connect();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (!empty($_GET['id'])) {
+    $id = $_GET['id'];
+}
+
+$query = "SELECT * FROM coupons WHERE id = :id";
+$stmt = $db->prepare($query);
+$stmt->execute([':id' => $_GET['id']]);
+$coupon = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty(trim($_POST['code'])) && !empty($_POST['type']) && !empty(trim($_POST['remise'])) && !empty(trim($_POST['debut'])) && !empty(trim($_POST['fin_value']))) {
-        
-        $query = "SELECT code FROM coupons WHERE code = :code"; 
-        $stmt = $db->prepare($query);
-        $stmt->bindValue(':code', $_POST['code'], PDO::PARAM_STR);
-        $stmt->execute();
-        if ($stmt->fetchColumn()) {
-            header('Refresh: 2; url=insertCoupon.php?error=code');
-        }
-        
+
         $code = htmlspecialchars($_POST['code']);
         $remise = htmlspecialchars($_POST['remise']);
         $debut = htmlspecialchars($_POST['debut']);
         $fin = (int)$_POST['fin_value'];
         $fin_unit = $_POST['fin_unit'];
+        $dateFinCurrent = $coupon['fin'];
 
-        $debutDateTime = new DateTime($debut);
+        $newDateFin = new DateTime($dateFinCurrent);
         
         switch ($fin_unit) {
             case 'hours':
-                $debutDateTime->modify('+' . $fin . ' hours');
+                $newDateFin->modify('+' . $fin . ' hours');
                 break;
             case 'days':
-                $debutDateTime->modify('+' . $fin . ' days');
+                $newDateFin->modify('+' . $fin . ' days');
                 break;
             case 'months':
-                $debutDateTime->modify('+' . $fin . ' months');
+                $newDateFin->modify('+' . $fin . ' months');
                 break;
             case 'years':
-                $debutDateTime->modify('+' . $fin . ' years');
+                $newDateFin->modify('+' . $fin . ' years');
                 break;
         }
-    
-        $query2 = "INSERT coupons (code, remise, type, debut, fin) VALUE (?, ?, ?, ?, ?)";
-        $stmt2 = $db->prepare($query2);
-        $stmt2->execute([$code, $remise, $_POST['type'], $debut, $debutDateTime->format('Y-m-d H:i:s')]);
 
-        header('Refresh: 2; url=indexCoupon.php');        
+        $query2 = "UPDATE coupons SET code = :code, type = :type, remise = :remise, debut = :debut, fin = :fin WHERE id = :id";
+        $stmt2 = $db->prepare($query2);
+        $stmt2->execute([
+            ':code' => $code,
+            ':type' => $_POST['type'],
+            ':remise' => $remise,
+            ':debut' => $debut,
+            ':fin' => $newDateFin->format('Y-m-d H:i:s'),
+            ':id' => $_GET['id']
+        ]);
+        
+        header('Location: indexCoupon.php');
     }
 }
 
@@ -73,33 +83,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <br>
                 <div>
                     <label class="form-label" for="code">code:</label>
-                    <input type="text" class="form-control" id="code" name="code" placeholder="Code" value="">
+                    <input type="text" class="form-control" id="code" name="code" placeholder="Code" value="<?= $coupon['code'] ?>">
                     <span class="help-inline"></span>
                 </div>
                 <br>
                 <div>
                     <label class="form-label" for="remise">Remise:</label>
-                    <input type="number" class="form-control" id="remise" name="remise" placeholder="Montant" value="">
+                    <input type="number" class="form-control" id="remise" name="remise" placeholder="Montant" value="<?= $coupon['remise'] ?>">
                     <span class="help-inline"></span>
                 </div>
                 <br>
                 <div>
                     <label class="form-label" for="type">Type:</label>
-                    <input type="radio" id="type1" name="type" value="%">
+                    <input type="radio" id="type1" name="type" value="%" <?= $coupon['type'] === '%' ? 'checked' : '' ?>>
                     <span class="help-inline">%</span>
-                    <input type="radio" id="type2" name="type" value="€">
+                    <input type="radio" id="type2" name="type" value="€" <?= $coupon['type'] === '€' ? 'checked' : '' ?>>
                     <span class="help-inline">€</span>
                 </div>
                 <br>
                 <div>
                     <label class="form-label" for="debut">Date début:</label>
-                    <input type="datetime-local" class="form-control" id="debut" name="debut">
+                    <input type="datetime-local" class="form-control" id="debut" name="debut" value="<?= $coupon['debut'] ?>">
                     <span class="help-inline"></input>
 
                 </div>
                 <br>
                 <div>
                     <label class="form-label" for="fin">Date fin:</label>
+                    <span><?= date("d F Y H:i:s", strtotime($coupon['fin'])) ?></span>
                     <input type="number" class="form-control" id="fin_value" name="fin_value">
                     <select type="number" class="form-select" id="fin_unit" name="fin_unit">    
                         <option value="hours">Heure</option>

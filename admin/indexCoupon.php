@@ -48,8 +48,8 @@ $coupons = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
               <td><?= date("d F Y H:i:s",strtotime($coupon['debut'])) ?></td>
               <td><?= date("d/m/Y H:i:s",strtotime($coupon['fin'])) ?></td>
               <td width=340>               
-                <a class="btn btn-primary" href="admin/updateCoupon.php?id=<?= $coupon['id'] ?>"><span class="bi-pencil"></span> Modifier</a>
-                <a class="btn btn-danger" href="admin/deleteCoupon.php?id=<?= $coupon['id'] ?>"><span class="bi-x"></span> Supprimer</a>
+                <a class="btn btn-primary" href="updateCoupon.php?id=<?= $coupon['id'] ?>"><span class="bi-pencil"></span> Modifier</a>
+                <a class="btn btn-danger" onclick="return confirm('Voulez-vous vraiment supprimer le coupon ?')" href="deleteCoupon.php?id=<?= $coupon['id'] ?>"><span class="bi-x"></span> Supprimer</a>
               </td>
             </tr>
           <?php } ?>

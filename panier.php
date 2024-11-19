@@ -211,7 +211,7 @@ Database::disconnect();
 
         function decreaseQte(id) {
             let getQte = document.querySelector(`#qtpanier${id}`).innerHTML;
-            // let getPrice = document.querySelector(`#price${id}`).innerHTML;
+            let getPrice = document.querySelector(`#price${id}`).innerHTML;
 
             fetch('updateQte.php', {
                     method: 'POST',
@@ -223,6 +223,7 @@ Database::disconnect();
                     body: JSON.stringify({
                         id: id,
                         qt: getQte,
+                        price: getPrice,
                         action: 'decrease',
                     })
                 })
@@ -235,7 +236,7 @@ Database::disconnect();
                         })
                     } else {
                         document.querySelector(`#qtpanier${id}`).innerHTML = data.qte;
-                        // document.querySelector(`#total-ligne${id}`).innerHTML = getPrice * data.qte;
+                        document.querySelector(`#total-ligne${id}`).innerHTML = data.price;
                     }
                 })
                 .catch(error => console.error(error))
@@ -243,6 +244,7 @@ Database::disconnect();
 
         function increaseQte(id) {
             let getQte = document.querySelector(`#qtpanier${id}`).innerHTML;
+            let getPrice = document.querySelector(`#price${id}`).innerHTML;
             fetch('updateQte.php', {
                     method: 'POST',
                     headers: {
@@ -251,12 +253,14 @@ Database::disconnect();
                     body: JSON.stringify({
                         id: id,
                         qt: getQte,
+                        price: getPrice,
                         action: 'increase',
                     })
                 })
                 .then(response => response.json())
                 .then((data) => {
                     document.querySelector(`#qtpanier${id}`).innerHTML = data.qte;
+                    document.querySelector(`#total-ligne${id}`).innerHTML = data.price;
                 })
                 .catch(error => console.error(error))
         };

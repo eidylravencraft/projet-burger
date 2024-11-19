@@ -14,6 +14,7 @@ $db = Database::connect();
 
 if ($_POST['action'] == 'decrease') {
     $newQte = intval($_POST['qt']) - 1;
+    $newPrice = floatval($_POST['price']) * $newQte;
     $queryDown = "UPDATE panier SET qte = :qte WHERE qte > 1 AND id_item= :id AND userTemp = :userTemp";
     $stmt = $db->prepare($queryDown);
     $stmt->bindValue(":qte", $newQte, PDO::PARAM_INT);
@@ -22,13 +23,15 @@ if ($_POST['action'] == 'decrease') {
     $stmt->execute();
 
     $array = [
-        'qte' => $newQte
+        'qte' => $newQte,
+        'price' => $newPrice,
     ];
     echo json_encode($array);
 };
 
 if ($_POST['action'] == 'increase') {
     $newQte = intval($_POST['qt']) + 1;
+    $newPrice = floatval($_POST['price']) * $newQte;
     $queryDown = "UPDATE panier SET qte = :qte WHERE id_item= :id AND userTemp = :userTemp";
     $stmt = $db->prepare($queryDown);
     $stmt->bindValue(":qte", $newQte, PDO::PARAM_INT);
@@ -37,7 +40,8 @@ if ($_POST['action'] == 'increase') {
     $stmt->execute();
 
     $array = [
-        'qte' => $newQte
+        'qte' => $newQte,
+        'price' => $newPrice,
     ];
     echo json_encode($array);
 };
