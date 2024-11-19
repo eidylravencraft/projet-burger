@@ -10,6 +10,7 @@ if (isset($_SESSION['user_id'])) {
 } else {
     $user = $_COOKIE['userTemp'];
 }
+
 $query =
     "SELECT *
     FROM panier
@@ -75,7 +76,7 @@ Database::disconnect();
                                                 $totalTtc += $productCart['prix'] * $productCart['qte'];
                                             }
                                         ?>
-                                            <tr>
+                                            <tr id="row<?= $productCart['id'] ?>">
                                                 <th scope="row">
                                                     <a href="#"
                                                         onclick="deleteProduct(<?= $productCart['id'] ?>)">
@@ -185,28 +186,26 @@ Database::disconnect();
                     </div>
                 </div>
             <?php } ?>
-            <a class="btn btn-primary" href="index.html"><span class="bi-arrow-left"></span> Retour</a>
+            <a class="btn btn-primary" href="index.php"><span class="bi-arrow-left"></span> Retour</a>
         </div>
     </div>
     <script>
         function deleteProduct(id) {
             if (confirm('Etes-vous sûr de vouloir supprimer ce produit de votre panier ?')) {
-                // fetch('deleteProduct.php', {
-                //         method: 'POST',
-                //         headers: {
-                //             'Content-Type': 'application/json'
-                //         },
-                //         body: JSON.stringify({
-                //             id: id
-                //         })
-                //     })
-                //     .then(response => response.json())
-                //     .then((data) => {
-                //         // document.querySelector(``).innerHTML = data.;
-                //     })
-                //     .catch(error => console.error(error));
-            } else {
-
+                fetch('deleteProduct.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: id
+                        })
+                    })
+                    .then(response => response.json())
+                    .then((data) => {
+                        document.querySelector(`#row${id}`).remove();
+                    })
+                    .catch(error => console.error(error));
             }
         }
 
@@ -261,6 +260,7 @@ Database::disconnect();
                 })
                 .catch(error => console.error(error))
         };
+
     </script>
 </body>
 

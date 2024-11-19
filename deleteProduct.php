@@ -2,18 +2,24 @@
 require 'db.php';
 session_start();
 
-$userTemp = $_COOKIE["userTemp"];
-$_POST = json_decode(file_get_contents('php://input'), true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-$db = Database::connect();
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id'];
 
-$queryDown = "DELETE FROM panier WHERE id_item = :id AND userTemp = :userTemp";
-$stmt = $db->prepare($queryDown);
-$stmt->bindValue(":id", $_POST['id'], PDO::PARAM_INT);
-$stmt->bindValue(":userTemp", $userTemp, PDO::PARAM_STR);
-$stmt->execute();
+    $db = Database::connect();
 
-header('Location: panier.php');
-exit();
+    $query = "DELETE FROM panier WHERE id_item = :id_item AND userTemp = :userTemp";
+    $stmt = $db->prepare($query);
+    $stmt->execute([
+        ':id_item' => $id,
+        ':userTemp' => $_SESSION['user_id'] ?? $_COOKIE['userTemp']
+    ]);
 
-Database::disconnect();
+    Database::disconnect();
+
+    echo json_encode(['success' => true]);
+    
+
+}
+

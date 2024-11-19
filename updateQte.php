@@ -42,4 +42,4 @@ if ($_POST['action'] == 'increase') {
     echo json_encode($array);
 };
 
-Database::disconnect();
+

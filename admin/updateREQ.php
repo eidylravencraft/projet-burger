@@ -31,10 +31,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        if (isset($_FILES['image']) && $_FILES['image']['size'] <= 1024 * 1024) {
+
+            $extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+            $allowedExt = ['jpg', 'png', 'jpeg'];
+
+            if (in_array($extension, $allowedExt)) {
+
+                $newName = uniqid('img') . '.' . $extension;
+                move_uploaded_file($_FILES['image']['tmp_name'], '../images/' . $newName);
+
+                $filedUpdate[] = "image = :image";
+                $valueToBind[":image"] = $newName;
+
+                if ($product['image'] && file_exists('../images/' . $product['image'])) {
+                    unlink('../images/' . $product['image']);
+                }
+            }
+        }
+
         if (!empty($filedUpdate)) {
             $query2 =
                 "UPDATE items
-                    SET (" . implode(',', $filedUpdate) . ")
+                    SET " . implode(',', $filedUpdate) . "
                     WHERE id = :id";
             $stmt = $db->prepare($query2);
             $stmt->execute($valueToBind);

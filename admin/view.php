@@ -49,7 +49,7 @@ $product = $stmt->fetch(PDO::FETCH_ASSOC);
         </div>
       </div>
       <div class="form-actions">
-        <a class="btn btn-primary" href="index.html"><span class="bi-arrow-left"></span> Retour</a>
+        <a class="btn btn-primary" href="index.php"><span class="bi-arrow-left"></span> Retour</a>
       </div>
     </div>
   </div>

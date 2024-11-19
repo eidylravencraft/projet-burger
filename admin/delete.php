@@ -1,3 +1,30 @@
+<?php
+require '../db.php';
+require 'verifRole.php';
+
+$db = DataBase::connect();
+
+if (!empty($_GET['id'])) {
+    $id = $_GET['id'];
+}
+
+function deleteProduct($id) {
+
+    $db = DataBase::connect();
+    $query = "DELETE FROM items WHERE id = :id";
+    $stmt = $db->prepare($query);
+    $stmt->execute([
+        ':id' => $_POST['id']
+    ]);
+
+    header('Location: index.php');
+}
+
+if (!empty($_GET['confirm']) && $_GET['confirm'] == 1) {
+    deleteProduct($id);
+}
+
+?>
 
 <!DOCTYPE html>
 <html>
@@ -21,10 +48,10 @@
                 <br>
                 <form class="form" action="delete.php" role="form" method="post">
                     <br>
-                    <input type="hidden" name="id" value=""/>
+                    <input type="hidden" name="id" value="<?= $id ?>"/>
                     <p class="alert alert-warning">Etes vous sur de vouloir supprimer ?</p>
                     <div class="form-actions">
-                      <button type="submit" class="btn btn-warning">Oui</button>
+                      <a href="delete.php?id=<?= $id ?>&confirm=1" class="btn btn-warning">Oui</a>
                       <a class="btn btn-secondary" href="index.php">Non</a>
                     </div>
                 </form>
