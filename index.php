@@ -97,34 +97,7 @@ Database::disconnect();
                                             <h4><?= $product['name'] ?></h4>
                                             <p><?= $product['description'] ?></p>
 
-                                            <?php
-                                            if ($product['choice'] == 1) {
-                                            ?>
-
-                                                <select class="form-control" id="taille<?= $product['id'] ?>" name="taille">
-
-                                                <?php
-
-                                                $query3 =
-                                                    "SELECT *
-                                                FROM choix
-                                                JOIN choix_items
-                                                ON choix.id = choix_items.id_choix
-                                                WHERE choix_items.id_items = :id";
-                                                $stmt = $db->prepare($query3);
-                                                $stmt->execute([":id" => $product['id']]);
-                                                $choix = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                                foreach ($choix as $gout) {
-                                                    echo "<option value='" . $gout['nom_choix'] . "'>" . $gout['nom_choix'] . "</option>";
-                                                }
-                                            }
-
-                                                ?>
-                                                </select>
-                                                <br>
-
-                                                <a href="panierREQ.php?id_item=<?= $product['id'] ?>&prix=<?= $product['price'] ?>" class="btn btn-order" role="button"><span class="bi-cart-fill"></span> Commander</a>
+                                            <a href="panierREQ.php?id_item=<?= $product['id'] ?>&prix=<?= $product['price'] ?>" class="btn btn-order" role="button"><span class="bi-cart-fill"></span> Commander</a>
                                         </div>
                                     </div>
                                 </div>
