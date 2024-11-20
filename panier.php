@@ -264,7 +264,6 @@ Database::disconnect();
                 })
                 .catch(error => console.error(error))
         };
-
     </script>
 </body>
 

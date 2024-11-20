@@ -2,9 +2,10 @@
 require 'db.php';
 session_start();
 
-if (isset($_GET['id_item']) && isset($_GET['prix'])) {
+if (isset($_GET['id_item']) && isset($_GET['prix']) || isset($_GET['choix'])) {
     $id_item = $_GET['id_item'];
     $prix = $_GET['prix'];
+    $choix = $_GET['choix'];
 };
 
 if (isset($_SESSION['user_id'])) {
@@ -36,9 +37,9 @@ if ($item) {
     header('Location: ' . $_SERVER['HTTP_REFERER']);
 } else {
     // Insert l'item dans le panier
-    $query3 = "INSERT INTO panier(id_item, qte, prix, userTemp) VALUES(?, ?, ?, ?)";
+    $query3 = "INSERT INTO panier(id_item, qte, prix, userTemp, choix) VALUES(?, ?, ?, ?, ?)";
     $stmt = $db->prepare($query3);
-    $stmt->execute([$id_item, 1, $prix, $user]);
+    $stmt->execute([$id_item, 1, $prix, $user, $choix]);
     header('Location: ' . $_SERVER['HTTP_REFERER']);
 }
 

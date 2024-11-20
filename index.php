@@ -29,11 +29,6 @@ $categs = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
 $query2 = "SELECT * FROM items";
 $products = $db->query($query2)->fetchAll(PDO::FETCH_ASSOC);
 
-$query3 = "SELECT * FROM boisson";
-$stmt = $db->prepare($query3);
-$stmt->execute();
-$boissons = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 Database::disconnect();
 
 ?>
@@ -97,7 +92,7 @@ Database::disconnect();
                                 <div class="col-md-6 col-lg-4">
                                     <div class="img-thumbnail">
                                         <img src="images/<?= $product['image'] ?>" class="img-fluid" alt="...">
-                                        <div class="price"><?= number_format($product['price'], 2, ',', ' ') ?></div>
+                                        <div class="price"><?= number_format($product['price'], 2, ',', ' ') ?> €</div>
                                         <div class="caption">
                                             <h4><?= $product['name'] ?></h4>
                                             <p><?= $product['description'] ?></p>
@@ -110,13 +105,12 @@ Database::disconnect();
 
                                                 <?php
 
-                                                foreach ($boissons as $taille) {
-                                                    if ($product['category'] == $taille['id_category']) {
-                                                        echo "<option value='" . $taille['taille'] . "'>" . $taille['taille'] . "</option>";
-                                                    }
-                                                }
-
-                                                $query3 = "SELECT * FROM choix WHERE id_item = :id";
+                                                $query3 =
+                                                    "SELECT *
+                                                FROM choix
+                                                JOIN choix_items
+                                                ON choix.id = choix_items.id_choix
+                                                WHERE choix_items.id_items = :id";
                                                 $stmt = $db->prepare($query3);
                                                 $stmt->execute([":id" => $product['id']]);
                                                 $choix = $stmt->fetchAll(PDO::FETCH_ASSOC);
