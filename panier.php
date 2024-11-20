@@ -11,6 +11,7 @@ if (isset($_SESSION['user_id'])) {
     $user = $_COOKIE['userTemp'];
 }
 
+// On fait une jointure. Dans une jointure on spécifie toujours nom_de_la_table.sur_quoi_on_pointe
 $query =
     "SELECT *
     FROM panier
@@ -90,6 +91,7 @@ Database::disconnect();
                                                     <a href=""></a><br>
                                                     <span><small><?= $productCart['name'] ?></small></span>
                                                 </td>
+                                                <!-- number_format permet de formatter un nombre (valeur, nombre de décimals, séparateur décimal, séparateur millier) -->
                                                 <td id="price<?= $productCart['id'] ?>"><?= number_format($productCart['price'], 2, ',', ' ') ?> €</td>
                                                 <td>
                                                     <div class="quantity"
@@ -190,6 +192,7 @@ Database::disconnect();
         </div>
     </div>
     <script>
+        // On utilise AJAX (Asynchronous JavaScript and XML)
         function deleteProduct(id) {
             if (confirm('Etes-vous sûr de vouloir supprimer ce produit de votre panier ?')) {
                 fetch('deleteProduct.php', {
@@ -213,6 +216,7 @@ Database::disconnect();
             let getQte = document.querySelector(`#qtpanier${id}`).innerHTML;
             let getPrice = document.querySelector(`#price${id}`).innerHTML;
 
+            // Envoie de la requête
             fetch('updateQte.php', {
                     method: 'POST',
                     headers: {
@@ -220,6 +224,7 @@ Database::disconnect();
                         // 'Content-Type': 'application/x-www-form-urlencoded'
                         // ↑ deuxième manière d'encoder, nous on utilise le json
                     },
+                    // Éléments qu'on envoie dans la requête
                     body: JSON.stringify({
                         id: id,
                         qt: getQte,
@@ -227,7 +232,10 @@ Database::disconnect();
                         action: 'decrease',
                     })
                 })
+                // Retour de la requête
+                // Retourner la réponse sous format json
                 .then(response => response.json())
+                // Récupère le return en format javascript
                 .then((data) => {
                     if (data.qte == 0) {
                         let link = document.querySelector(`#decrease${id}`);
@@ -235,6 +243,7 @@ Database::disconnect();
                             e.preventDefault();
                         })
                     } else {
+                        // qte et price sont les clés qu'on a défini dans updateQte dans $array
                         document.querySelector(`#qtpanier${id}`).innerHTML = data.qte;
                         document.querySelector(`#total-ligne${id}`).innerHTML = data.price;
                     }
